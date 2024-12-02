@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽卡模拟器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            padding: 10px;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .result-container {
+            margin: 10px 0;
+            min-height: 400px;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-image {
+            max-width: 100%;
+            max-height: 100%;
+            margin: 0px 0;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            margin: 5px 0;
+            font-size: 15px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .flag {
+            color: #ff4444;
+            font-weight: bold;
+            font-size: 24px;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            border: 2px solid #ff4444;
+            animation: rainbow 3s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% {
+                color: #ff0000;
+            }
+
+            20% {
+                color: #ff8800;
+            }
+
+            40% {
+                color: #ffff00;
+            }
+
+            60% {
+                color: #00ff00;
+            }
+
+            80% {
+                color: #0000ff;
+            }
+
+            100% {
+                color: #ff0000;
+            }
+        }
+
+        .stats {
+            margin-top: 20px;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .draw-animation {
+            animation: draw 0.5s ease;
+        }
+
+        @keyframes draw {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>不要放过这个明日方舟</h1>
+        <p>抽中FLAG的概率为0.1%（好高的爆率）</p>
+        <button id="drawButton" onclick="draw()">抽一发</button>
+        <div class="result-container">
+            <p id="message" class="message"></p>
+            <img id="resultImage" class="result-image" style="display: none;">
+        </div>
+        <div class="stats">
+            <p>已抽次数：<span id="drawCount">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        let isDrawing = false;
+        let drawCount = 0;
+
+        async function draw() {
+            if (isDrawing) return;
+
+            const button = document.getElementById('drawButton');
+            const message = document.getElementById('message');
+            const resultImage = document.getElementById('resultImage');
+            const drawCountElement = document.getElementById('drawCount');
+
+            try {
+                isDrawing = true;
+                button.disabled = true;
+                message.textContent = '抽卡中...';
+                message.classList.remove('flag');
+                resultImage.style.display = 'none';
+
+                // 添加抽卡动画
+                message.classList.add('draw-animation');
+
+                const response = await fetch('/draw');
+                const result = await response.json();
+
+                // 更新抽卡次数
+                drawCount++;
+                drawCountElement.textContent = drawCount;
+
+                // 移除动画类
+                setTimeout(() => {
+                    message.classList.remove('draw-animation');
+                }, 500);
+
+                if (result.type === 'flag') {
+                    message.textContent = result.message;
+                    message.classList.add('flag');
+                    resultImage.style.display = 'none';
+                } else {
+                    message.textContent = result.message;
+                    message.classList.remove('flag');
+                    if (result.image) {
+                        resultImage.src = `/static/img/${result.image}`;
+                        resultImage.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                message.textContent = '抽卡失败，请重试';
+                console.error('Error:', error);
+            } finally {
+                isDrawing = false;
+                button.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

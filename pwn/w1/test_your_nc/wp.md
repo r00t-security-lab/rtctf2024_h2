@@ -1,0 +1,1 @@
+nc连上直接ls，cat flag即可

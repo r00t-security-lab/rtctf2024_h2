@@ -1,0 +1,150 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#game-container {
+    position: relative;
+    width: 820px;
+    height: 620px;
+    background-color: #111;
+    border: 5px solid #ff0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+#game-area {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    background: url('background.jpg') no-repeat center center / cover;
+    overflow: hidden;
+}
+
+#ui-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#instructions {
+    font-size: 20px;
+    color: #ff0;
+    text-shadow: 0 0 5px #ff0;
+}
+
+#score {
+    font-size: 20px;
+    color: #ff0;
+    text-shadow: 0 0 5px #ff0;
+    margin-top: 10px;
+}
+
+#restart-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #f00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+#restart-button:hover {
+    background-color: #d00;
+}
+
+.tank {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+}
+
+.enemy {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: blue;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.8);
+}
+
+.bullet {
+    position: absolute;
+    width: 5px;
+    height: 10px;
+    background-color: white;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+#instructions {
+    font-size: 20px;
+    color: #ff0;
+    text-shadow: 0 0 5px #ff0;
+}
+
+#score {
+    font-size: 20px;
+    color: #ff0;
+    text-shadow: 0 0 5px #ff0;
+    margin-top: 10px;
+}
+
+#restart-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #f00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+#restart-button:hover {
+    background-color: #d00;
+}
+
+.tank {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+}
+
+.enemy {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-color: blue;
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.8);
+}
+
+.bullet {
+    position: absolute;
+    width: 5px;
+    height: 10px;
+    background-color: white;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+}

@@ -1,0 +1,29 @@
+压缩包解压密码是开赛日期八位数字
+
+第一层：hint是阴阳怪气加码，the_first-is_always_simple，解压之后图片改宽高即可
+r00t{zheshidiyiceng_
+
+第二层：压缩包解密需要用到第一层的“r00t{zheshidiyiceng_”，hint是汤姆码tomtom加密
+解出来是“di_er_ceng_zen_me_zuo”，通过正则表达式^([a-z){3}\d[a-z]$爆破从图片里解出来的压缩包，密码是sxy2e，
+ttthhheeesecondfloor_
+
+第三层：压缩包解密需要用到第二层的“ttthhheeesecondfloor_”，图片非夏多，看看交点
+四个交点代表“-” 三个交点代表空格 两个交点代表“.”，摩斯电码解出来是“that_3hird”
+010打开flag3.zip结尾处base64解码得到123951，去解压另一个压缩包。
+base62加码：xihuanwan_misc_ma
+
+第四层：压缩包解密需要用到第三层的“xihuanwan_misc_ma”，查看hint4.txt，都2024年了不会还有人解不出U2FsdGVkX1+y2rlJZlJCMnvyDwHwzkgHvNsG2TF6sFlBlxBs0w4EmyXdDe6s7viL吧
+用到Triple DES解密，解压压缩包，hint.txt中的字符串通过Caesar调整成1a813cbb17c040358d772e37fa137edbeddedb38bf704a56b2a9e22dc7f05f77
+.db是微信数据库备份文件，py解密恢复文件。cmd中执行python shuju.py -k 1a813cbb17c040358d772e37fa137edbeddedb38bf704a56b2a9e22dc7f05f77 -d MSG0.db 62914560
+其中shuju.py自己上csdn搜索微信数据库解密。
+使用DB Browser for SQLite查看文件
+得到flag4:L1u_and_K1cky_Mu
+
+第五层：压缩包解密需要用到第四层的“L1u_and_K1cky_Mu”，用serpent隐写解出里面的txt，密码是seecret
+然后是零宽隐写
+flag是u_r_50_5m4rt!
+
+然后用md5加密 r00t{zheshidiyiceng_|ttthhheeesecondfloor_|xihuanwan_misc_ma|L1u_and_K1cky_Mu|u_r_50_5m4rt!
+
+得到00AE6F47683311B6943729A6C67CECA1
+套上r00t就是flag了。

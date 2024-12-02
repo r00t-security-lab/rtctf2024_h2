@@ -1,0 +1,1 @@
+ida里找到j((l*(*,c)/Gk++UkGa(mGsv(OG@(je然后和0x18进行异或

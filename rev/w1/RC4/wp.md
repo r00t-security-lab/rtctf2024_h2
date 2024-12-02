@@ -1,0 +1,3 @@
+直接对数组数据进行RC4即可获取flag，密钥是r00t2024
+
+flag：r00t2024{SyMm3TrY_1s_b3avt1fUl}
